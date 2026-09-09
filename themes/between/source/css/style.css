@@ -222,6 +222,58 @@ img {
   display: none;
 }
 
+.page-loading {
+  position: fixed;
+  z-index: 1000;
+  inset: 0 0 auto;
+  height: 3px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.page-loading.is-visible {
+  opacity: 1;
+}
+
+.page-loading-bar {
+  display: block;
+  width: 35%;
+  height: 100%;
+  border-radius: 0 999px 999px 0;
+  background: var(--accent, #6d5dfc);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent, #6d5dfc) 55%, transparent);
+  animation: page-loading-progress 1.15s ease-in-out infinite;
+}
+
+.page-loading.is-completing .page-loading-bar {
+  width: 100%;
+  animation: none;
+  transition: width 180ms ease;
+}
+
+.page-loading-spinner {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: page-loading-spin 700ms linear infinite;
+}
+
+@keyframes page-loading-progress {
+  0% { transform: translateX(-110%); }
+  55% { transform: translateX(160%); }
+  100% { transform: translateX(300%); }
+}
+
+@keyframes page-loading-spin {
+  to { transform: rotate(360deg); }
+}
+
 #main-content,
 .site-footer {
   animation: page-enter 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -264,25 +316,23 @@ html.is-pjax-ready:not(.swup-native).is-animating .site-footer {
 
 ::view-transition-old(site-content),
 ::view-transition-old(site-footer) {
-  animation: pjax-fade-out 240ms ease both;
+  animation: pjax-fade-out 180ms ease both;
 }
 
 ::view-transition-new(site-content),
 ::view-transition-new(site-footer) {
-  animation: pjax-fade-in 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: pjax-fade-in 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes pjax-fade-out {
   to {
     opacity: 0;
-    transform: translateY(-3px);
   }
 }
 
 @keyframes pjax-fade-in {
   from {
     opacity: 0;
-    transform: translateY(6px);
   }
 }
 

@@ -8,6 +8,23 @@
   var nativeTransitions = !reducedMotion && typeof document.startViewTransition === 'function';
   var directionTimer;
   var navigationInProgress = false;
+  var loadingTimer;
+  var loadingBar = document.querySelector('[data-page-loading]');
+
+  function setPageLoading(active) {
+    if (!loadingBar) return;
+    window.clearTimeout(loadingTimer);
+    loadingBar.classList.toggle('is-visible', active);
+    loadingBar.setAttribute('aria-hidden', active ? 'false' : 'true');
+    if (!active) {
+      loadingBar.classList.add('is-completing');
+      loadingTimer = window.setTimeout(function () {
+        loadingBar.classList.remove('is-completing');
+      }, 260);
+    } else {
+      loadingBar.classList.remove('is-completing');
+    }
+  }
 
   function articlePath(url) {
     var pathname = new URL(url || window.location.href, window.location.href).pathname;
@@ -448,6 +465,7 @@
     hooks: {
       'visit:start': function (visit) {
         navigationInProgress = true;
+        setPageLoading(true);
         root.classList.add('is-pjax-ready');
         setNavigationDirection(visit);
         if (reducedMotion) visit.animation.animate = false;
@@ -465,7 +483,12 @@
         updateActiveNavigation();
         initializePage();
         navigationInProgress = false;
+        setPageLoading(false);
         document.dispatchEvent(new CustomEvent('site:page-view'));
+      },
+      'visit:error': function () {
+        navigationInProgress = false;
+        setPageLoading(false);
       }
     }
   });
