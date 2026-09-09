@@ -451,7 +451,6 @@
         root.classList.add('is-pjax-ready');
         setNavigationDirection(visit);
         if (reducedMotion) visit.animation.animate = false;
-        else visit.animation.wait = true;
         cancelVisiblePrefetch();
         if (window.sitePageCleanup) window.sitePageCleanup();
       },
