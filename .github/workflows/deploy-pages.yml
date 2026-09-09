@@ -5,8 +5,14 @@ on:
     branches:
       - main
     paths:
-      - "source/_posts/**"
-      - ".content-sync-map.json"
+      - "source/**"
+      - "themes/**"
+      - "scripts/**"
+      - "tools/**"
+      - ".github/workflows/**"
+      - "_config.yml"
+      - "package.json"
+      - "pnpm-lock.yaml"
       - "README.md"
   workflow_dispatch:
   schedule:
@@ -83,7 +89,10 @@ jobs:
           echo "changed=false" >> "$GITHUB_OUTPUT"
 
       - name: Test on-chain publisher
-        if: steps.content.outputs.changed == 'true'
+        if: >-
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch' ||
+          steps.content.outputs.changed == 'true'
         run: pnpm test
 
       - name: Commit synchronized content
@@ -100,7 +109,10 @@ jobs:
           git push origin HEAD:main
 
       - name: Build site
-        if: steps.content.outputs.changed == 'true'
+        if: >-
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch' ||
+          steps.content.outputs.changed == 'true'
         run: |
           pnpm clean
           pnpm build
@@ -130,7 +142,10 @@ jobs:
           pnpm build
 
       - name: Publish pages branch
-        if: steps.content.outputs.changed == 'true'
+        if: >-
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch' ||
+          steps.content.outputs.changed == 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
