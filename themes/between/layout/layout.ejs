@@ -25,10 +25,7 @@
   </head>
   <body class="<%= page.layout ? 'page-' + page.layout : '' %>">
     <div class="page-loading" data-page-loading aria-hidden="true">
-      <span class="page-loading-bar" data-page-loading-bar></span>
       <span class="page-loading-spinner" aria-hidden="true"></span>
-      <span class="page-loading-status">Loading page</span>
-      <span class="sr-only">Loading page</span>
     </div>
     <%- partial('_partial/nav') %>
     <main id="main-content">

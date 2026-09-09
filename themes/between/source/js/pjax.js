@@ -10,16 +10,15 @@
   var navigationInProgress = false;
   var loadingTimer;
   var loadingStartedAt = 0;
-  var loadingBar = document.querySelector('[data-page-loading]');
+  var loadingIndicator = document.querySelector('[data-page-loading]');
 
   function setPageLoading(active) {
-    if (!loadingBar) return;
+    if (!loadingIndicator) return;
     window.clearTimeout(loadingTimer);
     if (active) {
-      if (!loadingBar.classList.contains('is-visible')) loadingStartedAt = Date.now();
-      loadingBar.classList.add('is-visible');
-      loadingBar.classList.remove('is-completing');
-      loadingBar.setAttribute('aria-hidden', 'false');
+      if (!loadingIndicator.classList.contains('is-visible')) loadingStartedAt = Date.now();
+      loadingIndicator.classList.add('is-visible');
+      loadingIndicator.setAttribute('aria-hidden', 'false');
       return;
     }
 
@@ -27,20 +26,16 @@
     var elapsed = Date.now() - loadingStartedAt;
     var finishDelay = Math.max(0, minimumVisibleTime - elapsed);
     loadingTimer = window.setTimeout(function () {
-      loadingBar.classList.add('is-completing');
-      loadingBar.setAttribute('aria-hidden', 'false');
-      loadingTimer = window.setTimeout(function () {
-        loadingBar.classList.remove('is-visible', 'is-completing');
-        loadingBar.setAttribute('aria-hidden', 'true');
-      }, 220);
+      loadingIndicator.classList.remove('is-visible');
+      loadingIndicator.setAttribute('aria-hidden', 'true');
     }, finishDelay);
   }
 
   function cancelPageLoading() {
-    if (!loadingBar) return;
+    if (!loadingIndicator) return;
     window.clearTimeout(loadingTimer);
-    loadingBar.classList.remove('is-visible', 'is-completing');
-    loadingBar.setAttribute('aria-hidden', 'true');
+    loadingIndicator.classList.remove('is-visible');
+    loadingIndicator.setAttribute('aria-hidden', 'true');
   }
 
   function articlePath(url) {

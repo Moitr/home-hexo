@@ -26,7 +26,6 @@
   --line: #e2e4e8;
   --soft: #f5f6f7;
   --accent: #1677ff;
-  --loading-accent: #c4774f;
   --green: #14a65a;
   --content: 672px;
   --article: 720px;
@@ -42,7 +41,6 @@ html.dark {
   --line: #292c30;
   --soft: #151719;
   --accent: #67a8ff;
-  --loading-accent: #e7a477;
   --green: #54d58a;
 }
 
@@ -227,19 +225,13 @@ img {
 .page-loading {
   position: fixed;
   z-index: 1000;
-  inset: 0 0 auto;
-  height: 2px;
+  inset: 14px 18px auto auto;
+  width: 14px;
+  height: 14px;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 180ms ease, visibility 180ms ease;
-}
-
-.page-loading::before {
-  position: absolute;
-  inset: 0;
-  background: color-mix(in srgb, var(--loading-accent) 18%, transparent);
-  content: "";
+  transition: opacity 160ms ease, visibility 160ms ease;
 }
 
 .page-loading.is-visible {
@@ -247,62 +239,14 @@ img {
   visibility: visible;
 }
 
-.page-loading-bar {
-  position: relative;
-  display: block;
-  width: 0;
-  height: 100%;
-  border-radius: 0 2px 2px 0;
-  background: var(--loading-accent);
-  box-shadow: 0 0 10px color-mix(in srgb, var(--loading-accent) 42%, transparent);
-  animation: page-loading-fill 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  will-change: transform, width;
-}
-
-.page-loading.is-completing .page-loading-bar {
-  width: 100%;
-  animation: none;
-  transition: opacity 180ms ease;
-}
-
 .page-loading-spinner {
-  position: fixed;
-  z-index: 2;
-  top: 14px;
-  right: 18px;
+  display: block;
   width: 14px;
   height: 14px;
-  border: 2px solid color-mix(in srgb, var(--loading-accent) 20%, transparent);
-  border-top-color: var(--loading-accent);
+  border: 2px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: page-loading-spin 700ms linear infinite;
-  pointer-events: none;
-}
-
-.page-loading-status {
-  position: fixed;
-  z-index: 1;
-  top: 12px;
-  right: 18px;
-  display: inline-flex;
-  min-height: 28px;
-  align-items: center;
-  padding: 0 10px 0 30px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-  color: color-mix(in srgb, var(--text) 68%, var(--muted));
-  font-family: "Inter Variable", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0.02em;
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--text) 8%, transparent);
-  pointer-events: none;
-}
-
-@keyframes page-loading-fill {
-  from { width: 0; }
-  to { width: 100%; }
 }
 
 @keyframes page-loading-spin {
