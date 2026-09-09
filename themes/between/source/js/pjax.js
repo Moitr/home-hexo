@@ -16,7 +16,7 @@
     if (!loadingBar) return;
     window.clearTimeout(loadingTimer);
     if (active) {
-      loadingStartedAt = Date.now();
+      if (!loadingBar.classList.contains('is-visible')) loadingStartedAt = Date.now();
       loadingBar.classList.add('is-visible');
       loadingBar.classList.remove('is-completing');
       loadingBar.setAttribute('aria-hidden', 'false');
@@ -476,16 +476,19 @@
   var swup = new window.Swup({
     containers: ['#main-content', '.site-footer'],
     animateHistoryBrowsing: true,
-    animationSelector: nativeTransitions ? false : '#main-content',
+    animationSelector: false,
     cache: true,
-    native: nativeTransitions,
+    native: false,
     hooks: {
+      'link:click': function () {
+        setPageLoading(true);
+      },
       'visit:start': function (visit) {
         navigationInProgress = true;
         setPageLoading(true);
         root.classList.add('is-pjax-ready');
         setNavigationDirection(visit);
-        if (reducedMotion) visit.animation.animate = false;
+        visit.animation.animate = false;
         cancelVisiblePrefetch();
         if (window.sitePageCleanup) window.sitePageCleanup();
       },

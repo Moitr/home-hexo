@@ -118,7 +118,10 @@ jobs:
           pnpm build
 
       - name: Publish articles and friend links to Polygon mainnet
-        if: steps.content.outputs.changed == 'true'
+        if: >-
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch' ||
+          steps.content.outputs.changed == 'true'
         id: polygon
         shell: bash
         env:
@@ -136,7 +139,12 @@ jobs:
           echo "configured=true" >> "$GITHUB_OUTPUT"
 
       - name: Rebuild with on-chain metadata
-        if: steps.content.outputs.changed == 'true' && steps.polygon.outputs.configured == 'true'
+        if: >-
+          (
+            github.event_name == 'push' ||
+            github.event_name == 'workflow_dispatch' ||
+            steps.content.outputs.changed == 'true'
+          ) && steps.polygon.outputs.configured == 'true'
         run: |
           pnpm clean
           pnpm build
