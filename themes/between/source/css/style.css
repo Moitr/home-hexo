@@ -56,7 +56,10 @@ html {
 body {
   margin: 0;
   min-width: 320px;
+  min-height: 100svh;
   overflow-x: clip;
+  display: flex;
+  flex-direction: column;
   background: var(--bg);
   color: var(--text);
   font-family: "Inter Variable", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
@@ -269,6 +272,7 @@ html.is-pjax-ready:not(.swup-native).is-changing .site-footer {
 }
 
 #main-content {
+  flex: 1 0 auto;
   view-transition-name: site-content;
 }
 
