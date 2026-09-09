@@ -9,21 +9,38 @@
   var directionTimer;
   var navigationInProgress = false;
   var loadingTimer;
+  var loadingStartedAt = 0;
   var loadingBar = document.querySelector('[data-page-loading]');
 
   function setPageLoading(active) {
     if (!loadingBar) return;
     window.clearTimeout(loadingTimer);
-    loadingBar.classList.toggle('is-visible', active);
-    loadingBar.setAttribute('aria-hidden', active ? 'false' : 'true');
-    if (!active) {
-      loadingBar.classList.add('is-completing');
-      loadingTimer = window.setTimeout(function () {
-        loadingBar.classList.remove('is-completing');
-      }, 260);
-    } else {
+    if (active) {
+      loadingStartedAt = Date.now();
+      loadingBar.classList.add('is-visible');
       loadingBar.classList.remove('is-completing');
+      loadingBar.setAttribute('aria-hidden', 'false');
+      return;
     }
+
+    var minimumVisibleTime = 320;
+    var elapsed = Date.now() - loadingStartedAt;
+    var finishDelay = Math.max(0, minimumVisibleTime - elapsed);
+    loadingTimer = window.setTimeout(function () {
+      loadingBar.classList.add('is-completing');
+      loadingBar.setAttribute('aria-hidden', 'false');
+      loadingTimer = window.setTimeout(function () {
+        loadingBar.classList.remove('is-visible', 'is-completing');
+        loadingBar.setAttribute('aria-hidden', 'true');
+      }, 220);
+    }, finishDelay);
+  }
+
+  function cancelPageLoading() {
+    if (!loadingBar) return;
+    window.clearTimeout(loadingTimer);
+    loadingBar.classList.remove('is-visible', 'is-completing');
+    loadingBar.setAttribute('aria-hidden', 'true');
   }
 
   function articlePath(url) {
@@ -488,7 +505,7 @@
       },
       'visit:error': function () {
         navigationInProgress = false;
-        setPageLoading(false);
+        cancelPageLoading();
       }
     }
   });
