@@ -265,6 +265,7 @@ img {
 
 .page-loading-spinner {
   position: fixed;
+  z-index: 2;
   top: 14px;
   right: 18px;
   width: 14px;
@@ -278,6 +279,7 @@ img {
 
 .page-loading-status {
   position: fixed;
+  z-index: 1;
   top: 12px;
   right: 18px;
   display: inline-flex;
