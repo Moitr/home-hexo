@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="A personal archive of code, curiosity, and life between the lines.">
+    <link rel="canonical" href="https://moitr.ren/posts/categories/build-self-monitoring-website-with-docker">
+    <title>使用 Docker 搭建一个视奸自己的网站 | About Moitr</title>
+    <script>
+      (function () {
+        var saved = localStorage.getItem('color-theme');
+        var dark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        var navigationEntry = window.performance && window.performance.getEntriesByType
+          ? window.performance.getEntriesByType('navigation')[0]
+          : null;
+        document.documentElement.classList.toggle('dark', dark);
+        if (navigationEntry && navigationEntry.type === 'back_forward') {
+          document.documentElement.classList.add('is-history-return');
+        }
+      }());
+    </script>
+    <link rel="stylesheet" href="/css/style.css?v=3d8caf75">
+  <meta name="generator" content="Hexo 8.1.2"></head>
+  <body class="page-post">
+    <div class="page-loading" data-page-loading="" aria-hidden="true">
+      <span class="page-loading-spinner" aria-hidden="true"></span>
+    </div>
+    
+<header class="site-header">
+  <nav class="site-nav" aria-label="Primary navigation">
+    <button class="icon-button mobile-menu-button" type="button" data-menu-toggle="" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation">
+      <svg class="icon icon-menu" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.8"></circle><circle cx="12" cy="12" r="1.8"></circle><circle cx="12" cy="19" r="1.8"></circle></svg>
+      <svg class="icon icon-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+    </button>
+
+    <div class="desktop-nav">
+      <div class="nav-links">
+        
+          <a class="nav-link " href="/">About</a>
+        
+          <a class="nav-link " href="/blog/">Blogs</a>
+        
+          <a class="nav-link " href="/friends/">Friends</a>
+        
+      </div>
+      <span class="nav-divider" aria-hidden="true"></span>
+      <div class="nav-actions">
+        <a class="icon-button" href="https://github.com/moitr" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5a15.4 15.4 0 0 0-8 0C6 2 5 2 5 2a8.8 8.8 0 0 0 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5A4 4 0 0 0 9 18v4M9 18c-4.5 2-5-2-7-2"></path></svg>
+        </a>
+        <button class="icon-button" type="button" data-theme-toggle="" aria-label="Switch color theme" title="Theme">
+          <svg class="icon theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
+          <svg class="icon theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+</header>
+
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true" hidden="">
+  <div class="mobile-nav-links">
+    
+      <a class="" href="/">About</a>
+    
+      <a class="" href="/blog/">Blogs</a>
+    
+      <a class="" href="/friends/">Friends</a>
+    
+  </div>
+  <div class="mobile-nav-actions">
+    <a class="icon-button" href="https://github.com/moitr" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5a15.4 15.4 0 0 0-8 0C6 2 5 2 5 2a8.8 8.8 0 0 0 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5A4 4 0 0 0 9 18v4M9 18c-4.5 2-5-2-7-2"></path></svg>
+    </a>
+    <button class="icon-button" type="button" data-theme-toggle="" aria-label="Switch color theme" title="Theme">
+      <svg class="icon theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"></path></svg>
+      <svg class="icon theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"></path></svg>
+    </button>
+  </div>
+</div>
+
+    <main id="main-content">
+      <article class="article-shell">
+  <aside class="article-toc" aria-label="Table of contents">
+    <div class="article-toc-sticky">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%80%E5%A7%8B%E6%90%AD%E5%BB%BA"><span class="toc-text">开始搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E9%94%AE%E9%83%A8%E7%BD%B2"><span class="toc-text">一键部署</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Agent"><span class="toc-text">配置 Agent</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Agent-%E9%85%8D%E7%BD%AE-Windows"><span class="toc-text">Agent 配置 - Windows</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Agent-%E9%85%8D%E7%BD%AE-macOS"><span class="toc-text">Agent 配置 - macOS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Agent-%E9%85%8D%E7%BD%AE-Android"><span class="toc-text">Agent 配置 - Android</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%88%E6%9E%9C%E5%B1%95%E7%A4%BA"><span class="toc-text">效果展示</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-text">结语</span></a></li></ol>
+    </div>
+  </aside>
+  <div class="article-main">
+    <header class="article-header">
+      <div class="article-header-topline">
+        <a class="article-back" href="/blog/"><span aria-hidden="true">←</span> Back to Blogs</a>
+        <button class="article-share" type="button" data-share="" aria-label="Share article" title="Share article">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg>
+        </button>
+      </div>
+      <h1>使用 Docker 搭建一个视奸自己的网站</h1>
+      <div class="article-meta">
+        <time datetime="2026-04-22T22:20:00.000Z">Apr 22, 2026 22:20</time>
+        
+      </div>
+      
+  <details class="article-onchain" aria-label="On-chain publication">
+    <summary class="article-onchain-status">This article is archived on the <strong>Polygon blockchain</strong> with a publicly verifiable on-chain record.</summary>
+    <div class="article-onchain-details">
+    <div class="article-onchain-row">
+      <span class="article-onchain-label">Block Height</span>
+      <span class="onchain-value-wrap">
+        <span class="block-height-pair">
+          <span class="onchain-text" title="Publication block">91819188</span>
+          <span class="block-height-arrow" aria-hidden="true">→</span>
+          <span class="onchain-text" data-latest-block="" data-rpc-url="https://polygon.drpc.org" title="Latest block"><span class="block-ticker"><span data-block-number="">93563402</span></span></span>
+          <span class="block-loader" title="Loading latest Polygon block" aria-hidden="true"></span>
+          <span class="live-indicator" title="Live Polygon block height" aria-hidden="true"></span>
+        </span>
+      </span>
+    </div>
+    <div class="article-onchain-row">
+      <span class="article-onchain-label">Transaction Hash</span>
+      <span class="onchain-value-wrap">
+        <span class="onchain-text">0x695fb700335d995162ccb9e0a72e562e9d7f35a45a8aa1cdacaf0c9428103896</span>
+      </span>
+    </div>
+    <div class="article-onchain-row">
+      <span class="article-onchain-label">Contract Address</span>
+      <span class="onchain-value-wrap">
+        <a class="onchain-link" href="https://polygonscan.com/address/0xDad794c60d7cAD5E85769D29c4F96C7ca0F3760b" target="_blank" rel="noreferrer">0xDad794c60d7cAD5E85769D29c4F96C7ca0F3760b</a>
+      </span>
+    </div>
+    </div>
+  </details>
+
+
+    
+      <aside class="article-origin" aria-label="原文来源">
+        <span class="article-origin-copy">本文通过自动化程序同步自原博客</span>
+        <span class="article-origin-separator" aria-hidden="true"> · </span>
+        <a href="https://moitr.ren/posts/categories/build-self-monitoring-website-with-docker" target="_blank" rel="noopener noreferrer">阅读原文<span class="article-origin-arrow" aria-hidden="true">↗</span></a>
+      </aside>
+    
+    </header>
+    <div class="article-content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/Monika-Dream/live-dashboard/">Live-dashboard</a></p>
+<p>教程均在Linux服务器上完成</p>
+<h2 id="开始搭建"><a href="#开始搭建" class="headerlink" title="开始搭建"></a>开始搭建</h2><p>搭建前确保已经服务器已经安装 Docker</p>
+<pre><code class="hljs bash">curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun</code></pre>
+
+
+<h3 id="一键部署"><a href="#一键部署" class="headerlink" title="一键部署"></a>一键部署</h3><h4 id="1-生成密钥"><a href="#1-生成密钥" class="headerlink" title="1.生成密钥"></a>1.生成密钥</h4><pre><code class="hljs bash"><span class="hljs-comment"># 设备密钥（每台设备各生成一个，记下来）</span>
+openssl rand -hex 16
+<span class="hljs-comment"># HASH_SECRET（服务端内部用，只需一个）</span>
+openssl rand -hex 32</code></pre>
+<h4 id="2-启动容器"><a href="#2-启动容器" class="headerlink" title="2.启动容器"></a>2.启动容器</h4><p><code>DEVICE_TOKEN</code> 的格式是 <code>密钥:设备ID:设备名称:平台</code></p>
+<p>如果你只有一台设备：</p>
+<pre><code class="hljs bash">docker run -d --name live-dashboard \
+  -p 3000:3000 \
+  -v dashboard_data:/data \
+  -e HASH_SECRET=&lt;MY_SECRET&gt; \
+  -e <span class="hljs-string">'DEVICE_TOKEN_1=&lt;MY_TOKEN&gt;:my-pc:MyPC:windows'</span> \
+  ghcr.io/monika-dream/live-dashboard:latest</code></pre>
+
+<p>多台设备：</p>
+<pre><code class="hljs bash">docker run -d --name live-dashboard \
+  -p 3000:3000 \
+  -v dashboard_data:/data \
+  -e HASH_SECRET=&lt;MY_SECRET&gt; \
+  -e <span class="hljs-string">'DEVICE_TOKEN_1=&lt;TOKEN_A&gt;:my-pc:我的电脑:windows'</span> \
+  -e <span class="hljs-string">'DEVICE_TOKEN_2=&lt;TOKEN_B&gt;:my-phone:我的手机:android'</span> \
+  ghcr.io/monika-dream/live-dashboard:latest
+<span class="hljs-comment">#                      ─────── ───── ──── ───────</span>
+<span class="hljs-comment">#                      密钥▲   ID▲  名称▲ 平台▲</span>
+<span class="hljs-comment"># ▲密钥：第 1 步生成的随机字符串，每台设备各不同</span>
+<span class="hljs-comment"># ▲ID：自定义英文标识（如 my-pc、phone-1），每台设备各不同</span>
+<span class="hljs-comment"># ▲名称：仪表盘显示名，支持中文（如 我的电脑、小米手机）</span>
+<span class="hljs-comment"># ▲平台：只能填 windows / macos / android</span></code></pre>
+
+<p>**注意：**每台设备必须有自己的 <code>DEVICE_TOKEN_N</code>，密钥和设备ID都不能重复。 如果两台设备共用同一个 TOKEN，它们会显示为同一台设备，状态互相覆盖。</p>
+<p><strong>需要更多设备？继续加 DEVICE_TOKEN_3、DEVICE_TOKEN_4……编号不强制连续。</strong></p>
+<blockquote>
+<p>已有容器要加设备？ 需要先停止并删除旧容器，再用新命令重建。数据保存在 <code>dashboard_data</code> 卷中，不会丢失：</p>
+</blockquote>
+<pre><code class="hljs bash">&gt;docker stop live-dashboard &amp;&amp; docker <span class="hljs-built_in">rm</span> live-dashboard
+&gt; <span class="hljs-comment"># 然后执行包含新 DEVICE_TOKEN 的 docker run 命令</span></code></pre>
+
+<h4 id="3-打开浏览器"><a href="#3-打开浏览器" class="headerlink" title="3.打开浏览器"></a>3.打开浏览器</h4><p>访问 <code>http://localhost:3000</code>，看到仪表盘页面就说明服务端已就绪（此时没有设备数据，会显示夜间模式）。</p>
+<h4 id="自定义站点元数据"><a href="#自定义站点元数据" class="headerlink" title="自定义站点元数据"></a>自定义站点元数据</h4><pre><code class="hljs bash">docker run -d --name live-dashboard \
+  -p 3000:3000 \
+  -v dashboard_data:/data \
+  -e HASH_SECRET=&lt;MY_SECRET&gt; \
+  -e DEVICE_TOKEN_1=&lt;MY_TOKEN&gt;:my-pc:MyPC:windows \
+  -e DISPLAY_NAME=你的名字 \
+  ghcr.io/monika-dream/live-dashboard:latest</code></pre>
+<p>除了显示名，你还可以自定义浏览器标签页标题、页面描述和网站图标：</p>
+<pre><code class="hljs bash">docker run -d --name live-dashboard \
+  -p 3000:3000 \
+  -v dashboard_data:/data \
+  -e HASH_SECRET=&lt;MY_SECRET&gt; \
+  -e DEVICE_TOKEN_1=&lt;MY_TOKEN&gt;:my-pc:MyPC:windows \
+  -e DISPLAY_NAME=你的名字 \
+  -e SITE_TITLE=<span class="hljs-string">"你的名字 Now"</span> \
+  -e SITE_DESC=<span class="hljs-string">"看看我在干什么"</span> \
+  -e SITE_FAVICON=<span class="hljs-string">"/favicon.ico"</span> \
+  ghcr.io/monika-dream/live-dashboard:latest</code></pre>
+
+<h2 id="配置-Agent"><a href="#配置-Agent" class="headerlink" title="配置 Agent"></a>配置 Agent</h2><h3 id="Agent-配置-Windows"><a href="#Agent-配置-Windows" class="headerlink" title="Agent 配置 - Windows"></a>Agent 配置 - Windows</h3><p>1.从原作者的 <a target="_blank" rel="noopener" href="https://github.com/Monika-Dream/live-dashboard/releases">GitHub Releases</a> 下载 <code>live-dashboard-agent.exe</code></p>
+<p>2.直接双击运行，首次运行会自动弹出设置对话框，填入服务器地址和 Token 即可</p>
+<p>配置完成后 Agent 自动开始上报</p>
+<p>详见原作者教程：<a target="_blank" rel="noopener" href="https://github.com/Monika-Dream/live-dashboard/wiki/Agent-%E9%85%8D%E7%BD%AE-Windows">Agent 配置 - Windows</a></p>
+<h3 id="Agent-配置-macOS"><a href="#Agent-配置-macOS" class="headerlink" title="Agent 配置 - macOS"></a>Agent 配置 - macOS</h3><p>1.从原作者的 <a target="_blank" rel="noopener" href="https://github.com/Monika-Dream/live-dashboard/releases">GitHub Releases</a> 下载 <code>live-dashboard-agent-macos.zip</code></p>
+<p>2.解压后直接运行，首次运行会自动弹出设置对话框，填入服务器地址和 Token 即可</p>
+<p>配置完成后 Agent 自动开始上报</p>
+<p>详见原作者教程：<a target="_blank" rel="noopener" href="https://github.com/Monika-Dream/live-dashboard/wiki/Agent-%E9%85%8D%E7%BD%AE-macOS">Agent 配置 - macOS</a></p>
+<h3 id="Agent-配置-Android"><a href="#Agent-配置-Android" class="headerlink" title="Agent 配置 - Android"></a>Agent 配置 - Android</h3><blockquote>
+<p>截至 <code> 2026.4.23 23点06分</code>  由于作者 GitHub Releases 的版本无法正确获取应用名称，请使用修改版本<br>下载地址：<a target="_blank" rel="noopener" href="https://oss.moitr.ren/app/LiveDashboard.apk">LiveDashboard</a></p>
+</blockquote>
+<p>1.安装后打开 APP，进入「设置」页填写服务器地址和 Token</p>
+<p>2.进入「健康」页，点击「授权」按钮授权 <code>Health Connect</code> 权限，选择要同步的数据类型（默认全选）</p>
+<p>3.<strong>重要</strong>：在「状态」页使用 <code>Shizuku</code> 授权（否则无法获取应用名称）</p>
+<p>4.在「状态」页开启保活权限</p>
+<h2 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h2><p><span class="deferred-image-shell" data-deferred-image-shell=""><img alt="效果" loading="lazy" data-deferred-src="https://oss.moitr.ren/img/posts/2026-04-23%20220734.png" decoding="async" fetchpriority="low" data-deferred-image="" class="deferred-image"></span></p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p><del>欢迎大家来视奸我：<a target="_blank" rel="noopener" href="https://now.moitr.ren/">Moitr Now</a></del> （已关</p>
+</div>
+    <footer class="article-footer">
+      <span>Last updated Aug 06, 2026</span>
+    </footer>
+  </div>
+  <div class="article-balance" aria-hidden="true"></div>
+</article>
+
+      
+    </main>
+    
+<footer class="site-footer">
+  <div class="site-footer-line">
+    <span>Build <a class="site-footer-build" href="https://github.com/Moitr/Dotme/commit/3d8caf75199fecdeb178188a454014cd45e9a341" target="_blank" rel="noopener noreferrer" aria-label="View commit 3d8caf75 on GitHub"><code>3d8caf75</code></a> · <time datetime="2026-09-10T14:22:20.012Z">2026-09-10 22:22:20 UTC+8</time></span>
+  </div>
+</footer>
+
+    <script src="/js/app.js?v=3d8caf75" defer=""></script>
+  
+
+</body></html>

@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="A personal archive of code, curiosity, and life between the lines.">
+    <link rel="canonical" href="https://moitr.ren/posts/tech/build-permanent-blockchain-blog-polygon-hexo-github-actions">
+    <title>从零构建永久存证的区块链博客：Polygon + Hexo + GitHub Actions 实战 | About Moitr</title>
+    <script>
+      (function () {
+        var saved = localStorage.getItem('color-theme');
+        var dark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        var navigationEntry = window.performance && window.performance.getEntriesByType
+          ? window.performance.getEntriesByType('navigation')[0]
+          : null;
+        document.documentElement.classList.toggle('dark', dark);
+        if (navigationEntry && navigationEntry.type === 'back_forward') {
+          document.documentElement.classList.add('is-history-return');
+        }
+      }());
+    </script>
+    <link rel="stylesheet" href="/css/style.css?v=3d8caf75">
+  <meta name="generator" content="Hexo 8.1.2"></head>
+  <body class="page-post">
+    <div class="page-loading" data-page-loading aria-hidden="true">
+      <span class="page-loading-spinner" aria-hidden="true"></span>
+    </div>
+    
+<header class="site-header">
+  <nav class="site-nav" aria-label="Primary navigation">
+    <button class="icon-button mobile-menu-button" type="button" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="Open navigation">
+      <svg class="icon icon-menu" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>
+      <svg class="icon icon-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+
+    <div class="desktop-nav">
+      <div class="nav-links">
+        
+          <a class="nav-link " href="/">About</a>
+        
+          <a class="nav-link " href="/blog/">Blogs</a>
+        
+          <a class="nav-link " href="/friends/">Friends</a>
+        
+      </div>
+      <span class="nav-divider" aria-hidden="true"></span>
+      <div class="nav-actions">
+        <a class="icon-button" href="https://github.com/moitr" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5a15.4 15.4 0 0 0-8 0C6 2 5 2 5 2a8.8 8.8 0 0 0 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5A4 4 0 0 0 9 18v4M9 18c-4.5 2-5-2-7-2"/></svg>
+        </a>
+        <button class="icon-button" type="button" data-theme-toggle aria-label="Switch color theme" title="Theme">
+          <svg class="icon theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+          <svg class="icon theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+</header>
+
+<div class="mobile-menu" id="mobile-menu" aria-hidden="true" hidden>
+  <div class="mobile-nav-links">
+    
+      <a class="" href="/">About</a>
+    
+      <a class="" href="/blog/">Blogs</a>
+    
+      <a class="" href="/friends/">Friends</a>
+    
+  </div>
+  <div class="mobile-nav-actions">
+    <a class="icon-button" href="https://github.com/moitr" target="_blank" rel="noreferrer" aria-label="GitHub" title="GitHub">
+      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5a15.4 15.4 0 0 0-8 0C6 2 5 2 5 2a8.8 8.8 0 0 0 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5A4 4 0 0 0 9 18v4M9 18c-4.5 2-5-2-7-2"/></svg>
+    </a>
+    <button class="icon-button" type="button" data-theme-toggle aria-label="Switch color theme" title="Theme">
+      <svg class="icon theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>
+      <svg class="icon theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+    </button>
+  </div>
+</div>
+
+    <main id="main-content">
+      <article class="article-shell">
+  <aside class="article-toc" aria-label="Table of contents">
+    <div class="article-toc-sticky">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E6%9E%B6%E6%9E%84"><span class="toc-text">最终架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83"><span class="toc-text">准备环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AE%BE%E8%AE%A1%E6%96%87%E7%AB%A0%E7%9A%84%E9%93%BE%E4%B8%8A%E6%A0%BC%E5%BC%8F"><span class="toc-text">先设计文章的链上格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E5%93%88%E5%B8%8C"><span class="toc-text">图片哈希</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Solidity-%E5%90%88%E7%BA%A6%E8%AE%BE%E8%AE%A1"><span class="toc-text">Solidity 合约设计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%80%8C%E6%B0%B8%E4%B9%85%E3%80%8D%E5%88%B0%E5%BA%95%E6%8C%87%E4%BB%80%E4%B9%88"><span class="toc-text">「永久」到底指什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-CREATE2-%E5%9B%BA%E5%AE%9A%E5%90%88%E7%BA%A6%E5%9C%B0%E5%9D%80"><span class="toc-text">使用 CREATE2 固定合约地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%91%E5%B8%83%E8%84%9A%E6%9C%AC%E5%A6%82%E4%BD%95%E9%81%BF%E5%85%8D%E9%87%8D%E5%A4%8D%E4%BA%A4%E6%98%93"><span class="toc-text">发布脚本如何避免重复交易</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A6%96%E9%A1%B5%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%8D%95%E7%8B%AC%E8%A7%84%E8%8C%83%E5%8C%96"><span class="toc-text">首页为什么需要单独规范化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GitHub-Actions-%E5%8F%8C%E6%9E%84%E5%BB%BA%E6%B5%81%E7%A8%8B"><span class="toc-text">GitHub Actions 双构建流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Secrets-%E4%B8%8E%E6%9D%83%E9%99%90%E9%85%8D%E7%BD%AE"><span class="toc-text">Secrets 与权限配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E9%93%BE%E5%89%8D%E5%90%8E%E7%9A%84%E9%AA%8C%E8%AF%81"><span class="toc-text">上链前后的验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="toc-text">实际踩过的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B5%8B%E8%AF%95%E7%BD%91Polygon%E4%B8%8D%E7%AD%89%E4%BA%8E%E6%97%A0%E9%99%90%E5%85%8D%E8%B4%B9"><span class="toc-text">1. 测试网Polygon不等于无限免费</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9E%84%E5%BB%BA%E6%97%B6%E9%97%B4%E8%AE%A9%E9%A6%96%E9%A1%B5%E6%97%A0%E9%99%90%E9%87%8D%E5%A4%8D%E4%B8%8A%E9%93%BE"><span class="toc-text">2. 构建时间让首页无限重复上链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-RPC-%E4%B8%8D%E7%A8%B3%E5%AE%9A%E5%AF%BC%E8%87%B4-CI-%E5%81%B6%E5%8F%91%E5%A4%B1%E8%B4%A5"><span class="toc-text">3. RPC 不稳定导致 CI 偶发失败</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%A4%96%E9%93%BE%E5%9B%BE%E7%89%87%E4%BB%8D%E7%84%B6%E5%8F%AF%E4%BB%A5%E6%B6%88%E5%A4%B1"><span class="toc-text">4. 外链图片仍然可以消失</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="toc-text">参考链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </aside>
+  <div class="article-main">
+    <header class="article-header">
+      <div class="article-header-topline">
+        <a class="article-back" href="/blog/"><span aria-hidden="true">&larr;</span> Back to Blogs</a>
+        <button class="article-share" type="button" data-share aria-label="Share article" title="Share article">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/></svg>
+        </button>
+      </div>
+      <h1>从零构建永久存证的区块链博客：Polygon + Hexo + GitHub Actions 实战</h1>
+      <div class="article-meta">
+        <time datetime="2026-08-10T06:24:11.000Z">Aug 10, 2026 06:24</time>
+        
+          <span aria-hidden="true"> | </span>
+          <span>#Hexo</span> <span>#GitHub Actions</span> <span>#Solidity</span> <span>#Polygon</span>
+        
+      </div>
+      
+  <details class="article-onchain" aria-label="On-chain publication">
+    <summary class="article-onchain-status">This article is archived on the <strong>Polygon blockchain</strong> with a publicly verifiable on-chain record.</summary>
+    <div class="article-onchain-details">
+    <div class="article-onchain-row">
+      <span class="article-onchain-label">Block Height</span>
+      <span class="onchain-value-wrap">
+        <span class="block-height-pair">
+          <span class="onchain-text" title="Publication block">91827525</span>
+          <span class="block-height-arrow" aria-hidden="true">&rarr;</span>
+          <span class="onchain-text" data-latest-block data-rpc-url="https://polygon.drpc.org" title="Latest block"><span class="block-ticker"><span data-block-number>93563402</span></span></span>
+          <span class="block-loader" title="Loading latest Polygon block" aria-hidden="true"></span>
+          <span class="live-indicator" title="Live Polygon block height" aria-hidden="true"></span>
+        </span>
+      </span>
+    </div>
+    <div class="article-onchain-row">
+      <span class="article-onchain-label">Transaction Hash</span>
+      <span class="onchain-value-wrap">
+        <span class="onchain-text">0xa2635c56cbb8490a2301c9e39327e398171f238654603c1f2d323c59317394bc</span>
+      </span>
+    </div>
+    <div class="article-onchain-row">
+      <span class="article-onchain-label">Contract Address</span>
+      <span class="onchain-value-wrap">
+        <a class="onchain-link" href="https://polygonscan.com/address/0xDad794c60d7cAD5E85769D29c4F96C7ca0F3760b" target="_blank" rel="noreferrer">0xDad794c60d7cAD5E85769D29c4F96C7ca0F3760b</a>
+      </span>
+    </div>
+    </div>
+  </details>
+
+
+    
+      <aside class="article-origin" aria-label="原文来源">
+        <span class="article-origin-copy">本文通过自动化程序同步自原博客</span>
+        <span class="article-origin-separator" aria-hidden="true"> · </span>
+        <a href="https://moitr.ren/posts/tech/build-permanent-blockchain-blog-polygon-hexo-github-actions" target="_blank" rel="noopener noreferrer">阅读原文<span class="article-origin-arrow" aria-hidden="true">↗</span></a>
+      </aside>
+    
+    </header>
+    <div class="article-content"><p>普通静态博客解决了「如何发布」的问题，却没有完全解决「如何证明」的问题：文章是否被修改过、某个版本究竟何时出现、网站关闭后还能不能验证原始内容，都依赖站长和托管平台。</p>
+<p>方案：Hexo 负责生成网站，GitHub Actions 负责自动构建，Polygon PoS 负责保存首页和文章数据，GitHub Pages 负责提供正常的网页访问体验。</p>
+<h2 id="最终架构"><a href="#最终架构" class="headerlink" title="最终架构"></a>最终架构</h2><p>整个发布过程可以概括为：</p>
+<figure class="mermaid-diagram mermaid-static mermaid-layout-tall" role="img" aria-label="Mermaid flowchart diagram">
+  <div class="mermaid-theme mermaid-theme-light" aria-hidden="true"><svg id="mermaid-8f69afcf58f3-0-light" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 507px;" viewBox="0 0 507 786" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#mermaid-8f69afcf58f3-0-light{font-family:Inter,Arial,sans-serif;font-size:15px;fill:#202328;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#mermaid-8f69afcf58f3-0-light .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#mermaid-8f69afcf58f3-0-light .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#mermaid-8f69afcf58f3-0-light .error-icon{fill:#ffffff;}#mermaid-8f69afcf58f3-0-light .error-text{fill:#000000;stroke:#000000;}#mermaid-8f69afcf58f3-0-light .edge-thickness-normal{stroke-width:1px;}#mermaid-8f69afcf58f3-0-light .edge-thickness-thick{stroke-width:3.5px;}#mermaid-8f69afcf58f3-0-light .edge-pattern-solid{stroke-dasharray:0;}#mermaid-8f69afcf58f3-0-light .edge-thickness-invisible{stroke-width:0;fill:none;}#mermaid-8f69afcf58f3-0-light .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-8f69afcf58f3-0-light .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-8f69afcf58f3-0-light .marker{fill:#737982;stroke:#737982;}#mermaid-8f69afcf58f3-0-light .marker.cross{stroke:#737982;}#mermaid-8f69afcf58f3-0-light svg{font-family:Inter,Arial,sans-serif;font-size:15px;}#mermaid-8f69afcf58f3-0-light p{margin:0;}#mermaid-8f69afcf58f3-0-light .label{font-family:Inter,Arial,sans-serif;color:#202328;}#mermaid-8f69afcf58f3-0-light .cluster-label text{fill:#000000;}#mermaid-8f69afcf58f3-0-light .cluster-label span{color:#000000;}#mermaid-8f69afcf58f3-0-light .cluster-label span p{background-color:transparent;}#mermaid-8f69afcf58f3-0-light .label text,#mermaid-8f69afcf58f3-0-light span{fill:#202328;color:#202328;}#mermaid-8f69afcf58f3-0-light .node rect,#mermaid-8f69afcf58f3-0-light .node circle,#mermaid-8f69afcf58f3-0-light .node ellipse,#mermaid-8f69afcf58f3-0-light .node polygon,#mermaid-8f69afcf58f3-0-light .node path{fill:#ffffff;stroke:#d7dbe1;stroke-width:1px;}#mermaid-8f69afcf58f3-0-light .rough-node .label text,#mermaid-8f69afcf58f3-0-light .node .label text,#mermaid-8f69afcf58f3-0-light .image-shape .label,#mermaid-8f69afcf58f3-0-light .icon-shape .label{text-anchor:middle;}#mermaid-8f69afcf58f3-0-light .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#mermaid-8f69afcf58f3-0-light .rough-node .label,#mermaid-8f69afcf58f3-0-light .node .label,#mermaid-8f69afcf58f3-0-light .image-shape .label,#mermaid-8f69afcf58f3-0-light .icon-shape .label{text-align:center;}#mermaid-8f69afcf58f3-0-light .node.clickable{cursor:pointer;}#mermaid-8f69afcf58f3-0-light .root .anchor path{fill:#737982!important;stroke-width:0;stroke:#737982;}#mermaid-8f69afcf58f3-0-light .arrowheadPath{fill:#0a0907;}#mermaid-8f69afcf58f3-0-light .edgePath .path{stroke:#737982;stroke-width:2.0px;}#mermaid-8f69afcf58f3-0-light .flowchart-link{stroke:#737982;fill:none;}#mermaid-8f69afcf58f3-0-light .edgeLabel{background-color:#f5f6f8;text-align:center;}#mermaid-8f69afcf58f3-0-light .edgeLabel p{background-color:#f5f6f8;}#mermaid-8f69afcf58f3-0-light .edgeLabel rect{opacity:0.5;background-color:#f5f6f8;fill:#f5f6f8;}#mermaid-8f69afcf58f3-0-light .labelBkg{background-color:rgba(245, 246, 248, 0.5);}#mermaid-8f69afcf58f3-0-light .cluster rect{fill:#f5f6f8;stroke:#d7dbe1;stroke-width:1px;}#mermaid-8f69afcf58f3-0-light .cluster text{fill:#000000;}#mermaid-8f69afcf58f3-0-light .cluster span{color:#000000;}#mermaid-8f69afcf58f3-0-light div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:Inter,Arial,sans-serif;font-size:12px;background:#ffffff;border:1px solid hsl(0, 0%, 90%);border-radius:2px;pointer-events:none;z-index:100;}#mermaid-8f69afcf58f3-0-light .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#202328;}#mermaid-8f69afcf58f3-0-light rect.text{fill:none;stroke-width:0;}#mermaid-8f69afcf58f3-0-light .icon-shape,#mermaid-8f69afcf58f3-0-light .image-shape{background-color:#f5f6f8;text-align:center;}#mermaid-8f69afcf58f3-0-light .icon-shape p,#mermaid-8f69afcf58f3-0-light .image-shape p{background-color:#f5f6f8;padding:2px;}#mermaid-8f69afcf58f3-0-light .icon-shape rect,#mermaid-8f69afcf58f3-0-light .image-shape rect{opacity:0.5;background-color:#f5f6f8;fill:#f5f6f8;}#mermaid-8f69afcf58f3-0-light .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#mermaid-8f69afcf58f3-0-light .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#mermaid-8f69afcf58f3-0-light :root{--mermaid-font-family:Inter,Arial,sans-serif;}</style><g><marker id="mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-8f69afcf58f3-0-light_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-8f69afcf58f3-0-light_flowchart-v2-circleEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-8f69afcf58f3-0-light_flowchart-v2-circleStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-8f69afcf58f3-0-light_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-8f69afcf58f3-0-light_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path d="M170.679,60.5L159.683,64.667C148.687,68.833,126.695,77.167,115.699,84.833C104.703,92.5,104.703,99.5,104.703,103L104.703,106.5" id="L_A_B_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_A_B_0" data-points="W3sieCI6MTcwLjY3ODczNDc1NjA5NzU1LCJ5Ijo2MC41fSx7IngiOjEwNC43MDMxMjUsInkiOjg1LjV9LHsieCI6MTA0LjcwMzEyNSwieSI6MTEwLjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M104.703,163L104.703,167.167C104.703,171.333,104.703,179.667,104.703,187.333C104.703,195,104.703,202,104.703,205.5L104.703,209" id="L_B_C_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_B_C_0" data-points="W3sieCI6MTA0LjcwMzEyNSwieSI6MTYzfSx7IngiOjEwNC43MDMxMjUsInkiOjE4OH0seyJ4IjoxMDQuNzAzMTI1LCJ5IjoyMTN9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M104.703,265.5L104.703,269.667C104.703,273.833,104.703,282.167,104.703,289.833C104.703,297.5,104.703,304.5,104.703,308L104.703,311.5" id="L_C_D_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_C_D_0" data-points="W3sieCI6MTA0LjcwMzEyNSwieSI6MjY1LjV9LHsieCI6MTA0LjcwMzEyNSwieSI6MjkwLjV9LHsieCI6MTA0LjcwMzEyNSwieSI6MzE1LjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M309.228,60.5L320.223,64.667C331.219,68.833,353.211,77.167,364.207,89.875C375.203,102.583,375.203,119.667,375.203,136.75C375.203,153.833,375.203,170.917,375.203,182.958C375.203,195,375.203,202,375.203,205.5L375.203,209" id="L_A_E_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_A_E_0" data-points="W3sieCI6MzA5LjIyNzUxNTI0MzkwMjQsInkiOjYwLjV9LHsieCI6Mzc1LjIwMzEyNSwieSI6ODUuNX0seyJ4IjozNzUuMjAzMTI1LCJ5IjoxMzYuNzV9LHsieCI6Mzc1LjIwMzEyNSwieSI6MTg4fSx7IngiOjM3NS4yMDMxMjUsInkiOjIxM31d" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M375.203,265.5L375.203,269.667C375.203,273.833,375.203,282.167,375.203,289.833C375.203,297.5,375.203,304.5,375.203,308L375.203,311.5" id="L_E_F_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_E_F_0" data-points="W3sieCI6Mzc1LjIwMzEyNSwieSI6MjY1LjV9LHsieCI6Mzc1LjIwMzEyNSwieSI6MjkwLjV9LHsieCI6Mzc1LjIwMzEyNSwieSI6MzE1LjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M104.703,368L104.703,372.167C104.703,376.333,104.703,384.667,115.076,392.764C125.448,400.861,146.193,408.722,156.566,412.652L166.938,416.583" id="L_D_G_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_D_G_0" data-points="W3sieCI6MTA0LjcwMzEyNSwieSI6MzY4fSx7IngiOjEwNC43MDMxMjUsInkiOjM5M30seyJ4IjoxNzAuNjc4NzM0NzU2MDk3NTUsInkiOjQxOH1d" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M375.203,368L375.203,372.167C375.203,376.333,375.203,384.667,364.831,392.764C354.458,400.861,333.713,408.722,323.341,412.652L312.968,416.583" id="L_F_G_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_F_G_0" data-points="W3sieCI6Mzc1LjIwMzEyNSwieSI6MzY4fSx7IngiOjM3NS4yMDMxMjUsInkiOjM5M30seyJ4IjozMDkuMjI3NTE1MjQzOTAyNCwieSI6NDE4fV0=" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M239.953,470.5L239.953,474.667C239.953,478.833,239.953,487.167,239.953,494.833C239.953,502.5,239.953,509.5,239.953,513L239.953,516.5" id="L_G_H_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_G_H_0" data-points="W3sieCI6MjM5Ljk1MzEyNSwieSI6NDcwLjV9LHsieCI6MjM5Ljk1MzEyNSwieSI6NDk1LjV9LHsieCI6MjM5Ljk1MzEyNSwieSI6NTIwLjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M239.953,573L239.953,577.167C239.953,581.333,239.953,589.667,239.953,597.333C239.953,605,239.953,612,239.953,615.5L239.953,619" id="L_H_I_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_H_I_0" data-points="W3sieCI6MjM5Ljk1MzEyNSwieSI6NTczfSx7IngiOjIzOS45NTMxMjUsInkiOjU5OH0seyJ4IjoyMzkuOTUzMTI1LCJ5Ijo2MjN9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path><path d="M239.953,675.5L239.953,679.667C239.953,683.833,239.953,692.167,239.953,699.833C239.953,707.5,239.953,714.5,239.953,718L239.953,721.5" id="L_I_J_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_I_J_0" data-points="W3sieCI6MjM5Ljk1MzEyNSwieSI6Njc1LjV9LHsieCI6MjM5Ljk1MzEyNSwieSI6NzAwLjV9LHsieCI6MjM5Ljk1MzEyNSwieSI6NzI1LjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-light_flowchart-v2-pointEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_A_B_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_B_C_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_C_D_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_A_E_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_E_F_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_D_G_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_F_G_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_G_H_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_H_I_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_I_J_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-A-0" transform="translate(239.953125, 34.25)"><rect class="basic label-container" style="" x="-89.1953125" y="-26.25" width="178.390625" height="52.5"></rect><g class="label" style="" transform="translate(-59.1953125, -11.25)"><rect></rect><foreignObject width="118.390625" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Markdown source</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-B-1" transform="translate(104.703125, 136.75)"><rect class="basic label-container" style="" x="-79.609375" y="-26.25" width="159.21875" height="52.5"></rect><g class="label" style="" transform="translate(-49.609375, -11.25)"><rect></rect><foreignObject width="99.21875" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Hexo first build</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-C-3" transform="translate(104.703125, 239.25)"><rect class="basic label-container" style="" x="-85.8671875" y="-26.25" width="171.734375" height="52.5"></rect><g class="label" style="" transform="translate(-55.8671875, -11.25)"><rect></rect><foreignObject width="111.734375" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>public/index.html</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-D-5" transform="translate(104.703125, 341.75)"><rect class="basic label-container" style="" x="-96.703125" y="-26.25" width="193.40625" height="52.5"></rect><g class="label" style="" transform="translate(-66.703125, -11.25)"><rect></rect><foreignObject width="133.40625" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Normalize and hash</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-E-7" transform="translate(375.203125, 239.25)"><rect class="basic label-container" style="" x="-79.1953125" y="-26.25" width="158.390625" height="52.5"></rect><g class="label" style="" transform="translate(-49.1953125, -11.25)"><rect></rect><foreignObject width="98.390625" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Article payload</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-F-9" transform="translate(375.203125, 341.75)"><rect class="basic label-container" style="" x="-123.796875" y="-26.25" width="247.59375" height="52.5"></rect><g class="label" style="" transform="translate(-93.796875, -11.25)"><rect></rect><foreignObject width="187.59375" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Gzip and JSON serialization</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-G-11" transform="translate(239.953125, 444.25)"><rect class="basic label-container" style="" x="-89.6171875" y="-26.25" width="179.234375" height="52.5"></rect><g class="label" style="" transform="translate(-59.6171875, -11.25)"><rect></rect><foreignObject width="119.234375" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Polygon contracts</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-H-15" transform="translate(239.953125, 546.75)"><rect class="basic label-container" style="" x="-93.7890625" y="-26.25" width="187.578125" height="52.5"></rect><g class="label" style="" transform="translate(-63.7890625, -11.25)"><rect></rect><foreignObject width="127.578125" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>On-chain metadata</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-I-17" transform="translate(239.953125, 649.25)"><rect class="basic label-container" style="" x="-91.7109375" y="-26.25" width="183.421875" height="52.5"></rect><g class="label" style="" transform="translate(-61.7109375, -11.25)"><rect></rect><foreignObject width="123.421875" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Hexo second build</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-J-19" transform="translate(239.953125, 751.75)"><rect class="basic label-container" style="" x="-101.7109375" y="-26.25" width="203.421875" height="52.5"></rect><g class="label" style="" transform="translate(-71.7109375, -11.25)"><rect></rect><foreignObject width="143.421875" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>GitHub Pages branch</p></span></div></foreignObject></g></g></g></g></g></svg></div>
+  <div class="mermaid-theme mermaid-theme-dark" aria-hidden="true"><svg id="mermaid-8f69afcf58f3-0-dark" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 507px;" viewBox="0 0 507 786" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#mermaid-8f69afcf58f3-0-dark{font-family:Inter,Arial,sans-serif;font-size:15px;fill:#e5e7eb;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#mermaid-8f69afcf58f3-0-dark .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#mermaid-8f69afcf58f3-0-dark .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#mermaid-8f69afcf58f3-0-dark .error-icon{fill:#24282f;}#mermaid-8f69afcf58f3-0-dark .error-text{fill:#dbd7d0;stroke:#dbd7d0;}#mermaid-8f69afcf58f3-0-dark .edge-thickness-normal{stroke-width:1px;}#mermaid-8f69afcf58f3-0-dark .edge-thickness-thick{stroke-width:3.5px;}#mermaid-8f69afcf58f3-0-dark .edge-pattern-solid{stroke-dasharray:0;}#mermaid-8f69afcf58f3-0-dark .edge-thickness-invisible{stroke-width:0;fill:none;}#mermaid-8f69afcf58f3-0-dark .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-8f69afcf58f3-0-dark .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-8f69afcf58f3-0-dark .marker{fill:#a1a7b0;stroke:#a1a7b0;}#mermaid-8f69afcf58f3-0-dark .marker.cross{stroke:#a1a7b0;}#mermaid-8f69afcf58f3-0-dark svg{font-family:Inter,Arial,sans-serif;font-size:15px;}#mermaid-8f69afcf58f3-0-dark p{margin:0;}#mermaid-8f69afcf58f3-0-dark .label{font-family:Inter,Arial,sans-serif;color:#e5e7eb;}#mermaid-8f69afcf58f3-0-dark .cluster-label text{fill:#dbd7d0;}#mermaid-8f69afcf58f3-0-dark .cluster-label span{color:#dbd7d0;}#mermaid-8f69afcf58f3-0-dark .cluster-label span p{background-color:transparent;}#mermaid-8f69afcf58f3-0-dark .label text,#mermaid-8f69afcf58f3-0-dark span{fill:#e5e7eb;color:#e5e7eb;}#mermaid-8f69afcf58f3-0-dark .node rect,#mermaid-8f69afcf58f3-0-dark .node circle,#mermaid-8f69afcf58f3-0-dark .node ellipse,#mermaid-8f69afcf58f3-0-dark .node polygon,#mermaid-8f69afcf58f3-0-dark .node path{fill:#24282f;stroke:#454b55;stroke-width:1px;}#mermaid-8f69afcf58f3-0-dark .rough-node .label text,#mermaid-8f69afcf58f3-0-dark .node .label text,#mermaid-8f69afcf58f3-0-dark .image-shape .label,#mermaid-8f69afcf58f3-0-dark .icon-shape .label{text-anchor:middle;}#mermaid-8f69afcf58f3-0-dark .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#mermaid-8f69afcf58f3-0-dark .rough-node .label,#mermaid-8f69afcf58f3-0-dark .node .label,#mermaid-8f69afcf58f3-0-dark .image-shape .label,#mermaid-8f69afcf58f3-0-dark .icon-shape .label{text-align:center;}#mermaid-8f69afcf58f3-0-dark .node.clickable{cursor:pointer;}#mermaid-8f69afcf58f3-0-dark .root .anchor path{fill:#a1a7b0!important;stroke-width:0;stroke:#a1a7b0;}#mermaid-8f69afcf58f3-0-dark .arrowheadPath{fill:#e4e1dc;}#mermaid-8f69afcf58f3-0-dark .edgePath .path{stroke:#a1a7b0;stroke-width:2.0px;}#mermaid-8f69afcf58f3-0-dark .flowchart-link{stroke:#a1a7b0;fill:none;}#mermaid-8f69afcf58f3-0-dark .edgeLabel{background-color:#20242a;text-align:center;}#mermaid-8f69afcf58f3-0-dark .edgeLabel p{background-color:#20242a;}#mermaid-8f69afcf58f3-0-dark .edgeLabel rect{opacity:0.5;background-color:#20242a;fill:#20242a;}#mermaid-8f69afcf58f3-0-dark .labelBkg{background-color:rgba(32, 36, 42, 0.5);}#mermaid-8f69afcf58f3-0-dark .cluster rect{fill:#20242a;stroke:#454b55;stroke-width:1px;}#mermaid-8f69afcf58f3-0-dark .cluster text{fill:#dbd7d0;}#mermaid-8f69afcf58f3-0-dark .cluster span{color:#dbd7d0;}#mermaid-8f69afcf58f3-0-dark div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:Inter,Arial,sans-serif;font-size:12px;background:#24282f;border:1px solid hsl(218.1818181818, 0%, 6.2745098039%);border-radius:2px;pointer-events:none;z-index:100;}#mermaid-8f69afcf58f3-0-dark .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#e5e7eb;}#mermaid-8f69afcf58f3-0-dark rect.text{fill:none;stroke-width:0;}#mermaid-8f69afcf58f3-0-dark .icon-shape,#mermaid-8f69afcf58f3-0-dark .image-shape{background-color:#20242a;text-align:center;}#mermaid-8f69afcf58f3-0-dark .icon-shape p,#mermaid-8f69afcf58f3-0-dark .image-shape p{background-color:#20242a;padding:2px;}#mermaid-8f69afcf58f3-0-dark .icon-shape rect,#mermaid-8f69afcf58f3-0-dark .image-shape rect{opacity:0.5;background-color:#20242a;fill:#20242a;}#mermaid-8f69afcf58f3-0-dark .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#mermaid-8f69afcf58f3-0-dark .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#mermaid-8f69afcf58f3-0-dark :root{--mermaid-font-family:Inter,Arial,sans-serif;}</style><g><marker id="mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-8f69afcf58f3-0-dark_flowchart-v2-circleEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-8f69afcf58f3-0-dark_flowchart-v2-circleStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-8f69afcf58f3-0-dark_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-8f69afcf58f3-0-dark_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path d="M170.679,60.5L159.683,64.667C148.687,68.833,126.695,77.167,115.699,84.833C104.703,92.5,104.703,99.5,104.703,103L104.703,106.5" id="L_A_B_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_A_B_0" data-points="W3sieCI6MTcwLjY3ODczNDc1NjA5NzU1LCJ5Ijo2MC41fSx7IngiOjEwNC43MDMxMjUsInkiOjg1LjV9LHsieCI6MTA0LjcwMzEyNSwieSI6MTEwLjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M104.703,163L104.703,167.167C104.703,171.333,104.703,179.667,104.703,187.333C104.703,195,104.703,202,104.703,205.5L104.703,209" id="L_B_C_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_B_C_0" data-points="W3sieCI6MTA0LjcwMzEyNSwieSI6MTYzfSx7IngiOjEwNC43MDMxMjUsInkiOjE4OH0seyJ4IjoxMDQuNzAzMTI1LCJ5IjoyMTN9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M104.703,265.5L104.703,269.667C104.703,273.833,104.703,282.167,104.703,289.833C104.703,297.5,104.703,304.5,104.703,308L104.703,311.5" id="L_C_D_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_C_D_0" data-points="W3sieCI6MTA0LjcwMzEyNSwieSI6MjY1LjV9LHsieCI6MTA0LjcwMzEyNSwieSI6MjkwLjV9LHsieCI6MTA0LjcwMzEyNSwieSI6MzE1LjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M309.228,60.5L320.223,64.667C331.219,68.833,353.211,77.167,364.207,89.875C375.203,102.583,375.203,119.667,375.203,136.75C375.203,153.833,375.203,170.917,375.203,182.958C375.203,195,375.203,202,375.203,205.5L375.203,209" id="L_A_E_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_A_E_0" data-points="W3sieCI6MzA5LjIyNzUxNTI0MzkwMjQsInkiOjYwLjV9LHsieCI6Mzc1LjIwMzEyNSwieSI6ODUuNX0seyJ4IjozNzUuMjAzMTI1LCJ5IjoxMzYuNzV9LHsieCI6Mzc1LjIwMzEyNSwieSI6MTg4fSx7IngiOjM3NS4yMDMxMjUsInkiOjIxM31d" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M375.203,265.5L375.203,269.667C375.203,273.833,375.203,282.167,375.203,289.833C375.203,297.5,375.203,304.5,375.203,308L375.203,311.5" id="L_E_F_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_E_F_0" data-points="W3sieCI6Mzc1LjIwMzEyNSwieSI6MjY1LjV9LHsieCI6Mzc1LjIwMzEyNSwieSI6MjkwLjV9LHsieCI6Mzc1LjIwMzEyNSwieSI6MzE1LjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M104.703,368L104.703,372.167C104.703,376.333,104.703,384.667,115.076,392.764C125.448,400.861,146.193,408.722,156.566,412.652L166.938,416.583" id="L_D_G_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_D_G_0" data-points="W3sieCI6MTA0LjcwMzEyNSwieSI6MzY4fSx7IngiOjEwNC43MDMxMjUsInkiOjM5M30seyJ4IjoxNzAuNjc4NzM0NzU2MDk3NTUsInkiOjQxOH1d" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M375.203,368L375.203,372.167C375.203,376.333,375.203,384.667,364.831,392.764C354.458,400.861,333.713,408.722,323.341,412.652L312.968,416.583" id="L_F_G_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_F_G_0" data-points="W3sieCI6Mzc1LjIwMzEyNSwieSI6MzY4fSx7IngiOjM3NS4yMDMxMjUsInkiOjM5M30seyJ4IjozMDkuMjI3NTE1MjQzOTAyNCwieSI6NDE4fV0=" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M239.953,470.5L239.953,474.667C239.953,478.833,239.953,487.167,239.953,494.833C239.953,502.5,239.953,509.5,239.953,513L239.953,516.5" id="L_G_H_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_G_H_0" data-points="W3sieCI6MjM5Ljk1MzEyNSwieSI6NDcwLjV9LHsieCI6MjM5Ljk1MzEyNSwieSI6NDk1LjV9LHsieCI6MjM5Ljk1MzEyNSwieSI6NTIwLjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M239.953,573L239.953,577.167C239.953,581.333,239.953,589.667,239.953,597.333C239.953,605,239.953,612,239.953,615.5L239.953,619" id="L_H_I_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_H_I_0" data-points="W3sieCI6MjM5Ljk1MzEyNSwieSI6NTczfSx7IngiOjIzOS45NTMxMjUsInkiOjU5OH0seyJ4IjoyMzkuOTUzMTI1LCJ5Ijo2MjN9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path><path d="M239.953,675.5L239.953,679.667C239.953,683.833,239.953,692.167,239.953,699.833C239.953,707.5,239.953,714.5,239.953,718L239.953,721.5" id="L_I_J_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_I_J_0" data-points="W3sieCI6MjM5Ljk1MzEyNSwieSI6Njc1LjV9LHsieCI6MjM5Ljk1MzEyNSwieSI6NzAwLjV9LHsieCI6MjM5Ljk1MzEyNSwieSI6NzI1LjV9XQ==" marker-end="url(#mermaid-8f69afcf58f3-0-dark_flowchart-v2-pointEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_A_B_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_B_C_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_C_D_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_A_E_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_E_F_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_D_G_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_F_G_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_G_H_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_H_I_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_I_J_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-A-0" transform="translate(239.953125, 34.25)"><rect class="basic label-container" style="" x="-89.1953125" y="-26.25" width="178.390625" height="52.5"></rect><g class="label" style="" transform="translate(-59.1953125, -11.25)"><rect></rect><foreignObject width="118.390625" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Markdown source</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-B-1" transform="translate(104.703125, 136.75)"><rect class="basic label-container" style="" x="-79.609375" y="-26.25" width="159.21875" height="52.5"></rect><g class="label" style="" transform="translate(-49.609375, -11.25)"><rect></rect><foreignObject width="99.21875" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Hexo first build</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-C-3" transform="translate(104.703125, 239.25)"><rect class="basic label-container" style="" x="-85.8671875" y="-26.25" width="171.734375" height="52.5"></rect><g class="label" style="" transform="translate(-55.8671875, -11.25)"><rect></rect><foreignObject width="111.734375" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>public/index.html</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-D-5" transform="translate(104.703125, 341.75)"><rect class="basic label-container" style="" x="-96.703125" y="-26.25" width="193.40625" height="52.5"></rect><g class="label" style="" transform="translate(-66.703125, -11.25)"><rect></rect><foreignObject width="133.40625" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Normalize and hash</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-E-7" transform="translate(375.203125, 239.25)"><rect class="basic label-container" style="" x="-79.1953125" y="-26.25" width="158.390625" height="52.5"></rect><g class="label" style="" transform="translate(-49.1953125, -11.25)"><rect></rect><foreignObject width="98.390625" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Article payload</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-F-9" transform="translate(375.203125, 341.75)"><rect class="basic label-container" style="" x="-123.796875" y="-26.25" width="247.59375" height="52.5"></rect><g class="label" style="" transform="translate(-93.796875, -11.25)"><rect></rect><foreignObject width="187.59375" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Gzip and JSON serialization</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-G-11" transform="translate(239.953125, 444.25)"><rect class="basic label-container" style="" x="-89.6171875" y="-26.25" width="179.234375" height="52.5"></rect><g class="label" style="" transform="translate(-59.6171875, -11.25)"><rect></rect><foreignObject width="119.234375" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Polygon contracts</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-H-15" transform="translate(239.953125, 546.75)"><rect class="basic label-container" style="" x="-93.7890625" y="-26.25" width="187.578125" height="52.5"></rect><g class="label" style="" transform="translate(-63.7890625, -11.25)"><rect></rect><foreignObject width="127.578125" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>On-chain metadata</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-I-17" transform="translate(239.953125, 649.25)"><rect class="basic label-container" style="" x="-91.7109375" y="-26.25" width="183.421875" height="52.5"></rect><g class="label" style="" transform="translate(-61.7109375, -11.25)"><rect></rect><foreignObject width="123.421875" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Hexo second build</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-J-19" transform="translate(239.953125, 751.75)"><rect class="basic label-container" style="" x="-101.7109375" y="-26.25" width="203.421875" height="52.5"></rect><g class="label" style="" transform="translate(-71.7109375, -11.25)"><rect></rect><foreignObject width="143.421875" height="22.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>GitHub Pages branch</p></span></div></foreignObject></g></g></g></g></g></svg></div>
+</figure>
+
+<p>这里有两个相互独立的合约：</p>
+<ul>
+<li><code>HomepageArchive</code> 保存首页 HTML、内容哈希、发布时间和版本号。</li>
+<li><code>ArticleArchive</code> 以文章 <code>slug</code> 的哈希为键，保存文章 JSON、内容哈希和版本信息。</li>
+</ul>
+<p>网页仍然从 CDN 或 GitHub Pages 加载，因此访问速度和普通 Hexo 博客没有区别。区块链负责提供一份公开、可验证、不能悄悄改写的发布记录。</p>
+<h2 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h2><p>本地需要 Node.js、pnpm、Git 和一个 Polygon 钱包：</p>
+<pre><code class="hljs bash">node --version
+pnpm --version
+git --version</code></pre>
+
+<p>安装依赖并验证 Hexo：</p>
+<pre><code class="hljs bash">pnpm install --frozen-lockfile
+pnpm clean
+pnpm build
+pnpm server</code></pre>
+
+<p>生产发布使用 Polygon 主网，链 ID 是 <code>137</code>，Gas 代币是 <code>POL</code>。建议单独创建一个只负责发布的钱包，不要直接使用存放主要资产的钱包。</p>
+<h2 id="先设计文章的链上格式"><a href="#先设计文章的链上格式" class="headerlink" title="先设计文章的链上格式"></a>先设计文章的链上格式</h2><p>文章不能直接把 Hexo 生成后的 HTML 原样塞进合约。HTML 会混入主题结构、构建元数据和样式细节，主题稍微调整就会让全部文章产生新版本。</p>
+<p>我最终使用下面的规范化 JSON：</p>
+<pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span>
+  <span class="hljs-attr">&quot;title&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Article title&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;slug&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;4&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;date&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;2026-08-10T12:00:00Z&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;content&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;H4sIAAAAA...&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;images&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span>
+    <span class="hljs-punctuation">&#123;</span>
+      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;architecture.png&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;hash&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;5d41402abc4b2a76b9719d911017c592&quot;</span>
+    <span class="hljs-punctuation">&#125;</span>
+  <span class="hljs-punctuation">]</span>
+<span class="hljs-punctuation">&#125;</span></code></pre>
+
+<p><code>content</code> 不是普通 Markdown，而是经过以下处理后的结果：</p>
+<ol>
+<li>将换行统一为 <code>LF</code>，去掉首尾空白，并确保末尾只有一个换行。</li>
+<li>使用 gzip level 9 压缩 Markdown。</li>
+<li>将压缩结果编码为 Base64，保证 JSON 可以稳定序列化。</li>
+<li>使用 UTF-8 编码整个 JSON，再写入合约的 <code>bytes</code>。</li>
+</ol>
+<p>确定性非常重要。同一篇文章无论在 Windows 还是 Linux 构建，都必须得到相同的字节序列。否则 GitHub Actions 每运行一次，就可能误判为新内容并支付一次 Gas。</p>
+<p>文章内容哈希没有直接计算压缩后的 Base64，而是对包含规范化 Markdown 的语义 JSON 计算 <code>keccak256</code>。这样哈希表达的是文章内容本身，而不是某个压缩器版本的输出细节。</p>
+<pre><code class="hljs js"><span class="hljs-keyword">const</span> semanticJson = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(&#123; ...payload, <span class="hljs-attr">content</span>: markdown &#125;);
+<span class="hljs-keyword">const</span> contentHash = <span class="hljs-title function_">keccak256</span>(<span class="hljs-title function_">toUtf8Bytes</span>(semanticJson));</code></pre>
+
+<h3 id="图片哈希"><a href="#图片哈希" class="headerlink" title="图片哈希"></a>图片哈希</h3><p>本地图片可以读取真实二进制并计算哈希，但远程图片存在一个经常被忽略的问题：构建机未必能稳定下载它们，远端还可能有防盗链、超时或内容动态变化。</p>
+<p>当前实现对外链图片计算的是「图片 URL 字符串的 MD5」，它只能标识文章引用了哪个地址，<strong>不能证明该地址返回的图片内容，也不能保证图片永久可用</strong>。</p>
+<p>如果要做严格的永久图片归档，可以选择：</p>
+<ul>
+<li>将图片上传到 IPFS，并把 CID 写进文章。</li>
+<li>使用 Arweave 保存图片二进制。</li>
+<li>在发布阶段下载图片，计算 SHA-256 或 Keccak-256，并把文件同步到不可变对象存储。</li>
+<li>对非常小的图片直接上链，但成本通常不合理。</li>
+</ul>
+<p>因此，「文章 Markdown 已上链」和「文章引用的所有资源都已永久保存」是两件不同的事。</p>
+<h2 id="Solidity-合约设计"><a href="#Solidity-合约设计" class="headerlink" title="Solidity 合约设计"></a>Solidity 合约设计</h2><p>文章合约的核心结构并不复杂：</p>
+<pre><code class="hljs solidity">struct Publication &#123;
+    bytes payload;
+    bytes32 contentHash;
+    bytes32 payloadHash;
+    uint256 version;
+    uint256 publishedAt;
+    uint256 publishedAtBlock;
+&#125;
+
+mapping(bytes32 =&gt; Publication) private publications;</code></pre>
+
+<p>写入时不直接使用字符串 <code>slug</code>，而是先计算：</p>
+<pre><code class="hljs js"><span class="hljs-keyword">const</span> slugHash = <span class="hljs-title function_">keccak256</span>(<span class="hljs-title function_">toUtf8Bytes</span>(slug));</code></pre>
+
+<p>合约的 <code>publish</code> 函数需要完成几项检查：</p>
+<pre><code class="hljs solidity">function publish(
+    bytes32 slugHash,
+    bytes calldata payload,
+    bytes32 contentHash
+) external &#123;
+    if (msg.sender != owner) revert NotOwner();
+    if (payload.length == 0) revert EmptyPayload();
+    if (payload.length &gt; MAX_ARTICLE_BYTES) revert PayloadTooLarge(...);
+    if (publications[slugHash].contentHash == contentHash) &#123;
+        revert UnchangedContent();
+    &#125;
+
+    // 保存数据、增加版本，并发出事件
+&#125;</code></pre>
+
+<p>我把单篇文章限制为 <code>24,576</code> 字节。这里限制的是最终 JSON 的 UTF-8 字节数，不是 Markdown 文件大小。gzip 会缩小正文，但 Base64 又会增加大约三分之一体积，所以一定要在发交易前检查最终 payload。</p>
+<p>合约同时保存两个哈希：</p>
+<ul>
+<li><code>contentHash</code> 用来判断文章的语义内容是否变化。</li>
+<li><code>payloadHash</code> 是合约对实际写入 <code>bytes</code> 计算的 <code>keccak256</code>，用来验证链上原始字节。</li>
+</ul>
+<h3 id="「永久」到底指什么"><a href="#「永久」到底指什么" class="headerlink" title="「永久」到底指什么"></a>「永久」到底指什么</h3><p>当前结构每次更新会覆盖 <code>publications[slugHash].payload</code>，因此合约读取接口只能直接返回最新版本。旧版本仍然存在于区块链历史、交易 calldata 和事件中，但不能通过当前 mapping 直接查询。</p>
+<p>如果需要让每个历史版本都能从合约方法直接读取，应改成：</p>
+<pre><code class="hljs solidity">mapping(bytes32 =&gt; mapping(uint256 =&gt; Publication)) private versions;
+mapping(bytes32 =&gt; uint256) public latestVersion;</code></pre>
+
+<p>代价是持续增长的合约存储和更高的 Gas。对个人博客而言，保留最新可读版本，同时依靠交易历史证明旧版本，是一个更实际的折中。</p>
+<h2 id="使用-CREATE2-固定合约地址"><a href="#使用-CREATE2-固定合约地址" class="headerlink" title="使用 CREATE2 固定合约地址"></a>使用 CREATE2 固定合约地址</h2><p>CI 不能依赖某个本地保存的部署结果，因此我使用 CREATE2 预先计算合约地址：</p>
+<pre><code class="hljs js"><span class="hljs-keyword">const</span> address = <span class="hljs-title function_">getCreate2Address</span>(
+  deterministicDeployer,
+  salt,
+  <span class="hljs-title function_">keccak256</span>(initCode)
+);</code></pre>
+
+<p><code>initCode</code> 包含合约字节码和构造参数。只要部署器、salt、编译结果和 owner 完全一致，最终地址就一致。发布脚本会先调用 <code>eth_getCode</code>：如果地址上没有代码就部署，有代码就直接复用。</p>
+<p>这里的坑是，<strong>更换发布钱包也会改变合约地址</strong>，因为 owner 是构造参数的一部分。升级 Solidity 版本、修改优化参数、调整合约代码或 salt，同样会得到新地址。不要在没有迁移计划时随意修改这些值。</p>
+<h2 id="发布脚本如何避免重复交易"><a href="#发布脚本如何避免重复交易" class="headerlink" title="发布脚本如何避免重复交易"></a>发布脚本如何避免重复交易</h2><p>文章发布脚本会扫描 <code>source/_posts</code>，并要求文件名与数字 slug 一致：</p>
+<pre><code class="hljs text">source/_posts/1.md -&gt; /archives/1/
+source/_posts/2.md -&gt; /archives/2/
+source/_posts/4.md -&gt; /archives/4/</code></pre>
+
+<p>数字 slug 必须是正整数且不能重复。它既是网页永久链接的一部分，也是链上文章的逻辑主键。发布过后不要把原文章换到另一个 slug，否则链上会被视为一篇全新的文章。</p>
+<p>对于每篇文章，脚本先读取链上记录：</p>
+<pre><code class="hljs js"><span class="hljs-keyword">const</span> previous = <span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">publication</span>(article.<span class="hljs-property">slugHash</span>);
+
+<span class="hljs-keyword">if</span> (previous.<span class="hljs-property">contentHash</span> === article.<span class="hljs-property">contentHash</span>) &#123;
+  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">`Article <span class="hljs-subst">$&#123;article.slug&#125;</span> is unchanged`</span>);
+&#125; <span class="hljs-keyword">else</span> &#123;
+  <span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">publish</span>(
+    article.<span class="hljs-property">slugHash</span>,
+    article.<span class="hljs-property">bytes</span>,
+    article.<span class="hljs-property">contentHash</span>
+  );
+&#125;</code></pre>
+
+<p>这意味着每次 CI 都可以扫描全部文章，但只有新增或真正修改的文章会发送交易。没有变化的文章会根据发布区块查询历史事件，恢复交易哈希并生成展示元数据。</p>
+<p>发送前还要执行 <code>estimateGas</code>，并预留 20% 的 gas limit 缓冲：</p>
+<pre><code class="hljs js"><span class="hljs-keyword">const</span> estimated = <span class="hljs-keyword">await</span> wallet.<span class="hljs-title function_">estimateGas</span>(transaction);
+<span class="hljs-keyword">const</span> gasLimit = (estimated * <span class="hljs-number">120n</span>) / <span class="hljs-number">100n</span>;</code></pre>
+
+<p>余额检查必须使用网络返回的 <code>maxFeePerGas</code> 或 <code>gasPrice</code>。合约首次部署通常比后续发布贵，而保存完整 HTML 或 JSON 的成本会随着字节数明显增加。</p>
+<h2 id="首页为什么需要单独规范化"><a href="#首页为什么需要单独规范化" class="headerlink" title="首页为什么需要单独规范化"></a>首页为什么需要单独规范化</h2><p>首页保存的是 Hexo 生成后的完整 HTML，但页面底部包含构建哈希和构建时间，页面中还会显示上一次发布的区块高度与交易哈希。如果直接对 HTML 求哈希，会形成一个循环：</p>
+<pre><code class="hljs text">构建时间变化 -&gt; HTML 哈希变化 -&gt; 再次上链
+链上信息变化 -&gt; HTML 再次变化 -&gt; 再次上链</code></pre>
+
+<p>解决方法是在计算 <code>contentHash</code> 前，移除两个动态区域：</p>
+<pre><code class="hljs js">normalized = normalized.<span class="hljs-title function_">replace</span>(
+  <span class="hljs-regexp">/&lt;footer class=&quot;site-footer&quot;&gt;[\s\S]*?&lt;\/footer&gt;/g</span>,
+  <span class="hljs-string">&#x27;&lt;footer class=&quot;site-footer&quot;&gt;&lt;/footer&gt;&#x27;</span>
+);
+
+normalized = normalized.<span class="hljs-title function_">replace</span>(
+  <span class="hljs-regexp">/&lt;!-- onchain-metadata:start --&gt;[\s\S]*?&lt;!-- onchain-metadata:end --&gt;/g</span>,
+  <span class="hljs-string">&#x27;&lt;!-- onchain-metadata --&gt;&#x27;</span>
+);</code></pre>
+
+<p>替换逻辑应该要求每个区域恰好出现一次。静默忽略模板结构变化很危险，因为某次主题修改可能让动态字段重新进入哈希，造成每次构建都重复付费。</p>
+<p>需要注意：合约实际保存的是当次构建的完整 HTML，规范化只用于计算内容哈希和去重。只改变构建时间时不会覆盖链上的旧 HTML，这是预期行为。</p>
+<h2 id="GitHub-Actions-双构建流程"><a href="#GitHub-Actions-双构建流程" class="headerlink" title="GitHub Actions 双构建流程"></a>GitHub Actions 双构建流程</h2><p>工作流只监听 <code>main</code> 分支，并授予 <code>contents: write</code> 权限：</p>
+<pre><code class="hljs yaml"><span class="hljs-attr">on:</span>
+  <span class="hljs-attr">push:</span>
+    <span class="hljs-attr">branches:</span> [<span class="hljs-string">main</span>]
+  <span class="hljs-attr">workflow_dispatch:</span>
+
+<span class="hljs-attr">permissions:</span>
+  <span class="hljs-attr">contents:</span> <span class="hljs-string">write</span></code></pre>
+
+<p>完整步骤如下：</p>
+<ol>
+<li>安装固定版本的 pnpm 和 Node.js。</li>
+<li>使用 <code>pnpm install --frozen-lockfile</code> 安装依赖。</li>
+<li>更新 README 中的文章索引并运行测试。</li>
+<li>第一次构建 Hexo，得到需要上链的首页 HTML。</li>
+<li>发布首页和文章到 Polygon。</li>
+<li>把区块高度、交易哈希、合约地址写入临时环境变量和 <code>.onchain/articles.json</code>。</li>
+<li>第二次构建 Hexo，让页面展示刚刚得到的链上信息。</li>
+<li>将 <code>public</code> 发布到孤立的 <code>pages</code> 分支。</li>
+</ol>
+<p>核心命令可以写成：</p>
+<pre><code class="hljs yaml"><span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Build</span> <span class="hljs-string">site</span>
+  <span class="hljs-attr">run:</span> <span class="hljs-string">|</span>
+<span class="hljs-string">    pnpm clean</span>
+<span class="hljs-string">    pnpm build</span>
+<span class="hljs-string"></span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Publish</span> <span class="hljs-string">to</span> <span class="hljs-string">Polygon</span>
+  <span class="hljs-attr">env:</span>
+    <span class="hljs-attr">POLYGON_PRIVATE_KEY:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">secrets.POLYGON_PRIVATE_KEY</span> <span class="hljs-string">&#125;&#125;</span>
+    <span class="hljs-attr">POLYGON_RPC_URL:</span> <span class="hljs-string">$&#123;&#123;</span> <span class="hljs-string">vars.POLYGON_RPC_URL</span> <span class="hljs-string">&#125;&#125;</span>
+  <span class="hljs-attr">run:</span> <span class="hljs-string">|</span>
+<span class="hljs-string">    pnpm onchain:publish</span>
+<span class="hljs-string">    pnpm onchain:publish:articles</span>
+<span class="hljs-string"></span>
+<span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Rebuild</span> <span class="hljs-string">with</span> <span class="hljs-string">on-chain</span> <span class="hljs-string">metadata</span>
+  <span class="hljs-attr">run:</span> <span class="hljs-string">|</span>
+<span class="hljs-string">    pnpm clean</span>
+<span class="hljs-string">    pnpm build</span></code></pre>
+
+<p><code>.onchain/articles.json</code> 只服务于同一次工作流的第二次构建，因此应该加入 <code>.gitignore</code>。真正可信的数据源仍然是 Polygon，JSON 文件只是生成页面时的缓存。</p>
+<h2 id="Secrets-与权限配置"><a href="#Secrets-与权限配置" class="headerlink" title="Secrets 与权限配置"></a>Secrets 与权限配置</h2><p>仓库的 <code>Settings -&gt; Secrets and variables -&gt; Actions</code> 中需要配置：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Secret</td>
+<td><code>POLYGON_PRIVATE_KEY</code></td>
+<td>发布钱包私钥</td>
+</tr>
+<tr>
+<td>Variable</td>
+<td><code>POLYGON_RPC_URL</code></td>
+<td>可选的 Polygon 主网 RPC</td>
+</tr>
+</tbody></table>
+<p><code>POLYGON_PRIVATE_KEY</code> 是钱包的 32 字节私钥，通常表现为 64 个十六进制字符。脚本可以兼容有无 <code>0x</code> 前缀，但不能填写钱包地址、助记词名称或 API Key。</p>
+<p>私钥必须放在 Secret，不能放在仓库文件、Actions Variable、构建日志或前端 JavaScript 中。<code>GITHUB_TOKEN</code> 由 GitHub Actions 自动提供，不需要手动创建。</p>
+<p>建议给发布钱包设置：</p>
+<ul>
+<li>只保留足够支付若干次发布的 POL。</li>
+<li>不与日常钱包或主要资产共用。</li>
+<li>定期检查 Actions 日志中是否出现异常交易。</li>
+<li>不在 Pull Request 工作流中开放主网发布步骤。</li>
+</ul>
+<h2 id="上链前后的验证"><a href="#上链前后的验证" class="headerlink" title="上链前后的验证"></a>上链前后的验证</h2><p>本地先验证构建和 payload：</p>
+<pre><code class="hljs bash">pnpm clean
+pnpm build
+pnpm <span class="hljs-built_in">test</span></code></pre>
+
+<p>也可以只模拟合约编译、地址计算和文章体积：</p>
+<pre><code class="hljs bash">POLYGON_WALLET_ADDRESS=0xYourPublisherAddress \
+pnpm onchain:check:articles</code></pre>
+
+<p>发布完成后，可以从合约读取文章并解压：</p>
+<pre><code class="hljs js"><span class="hljs-keyword">const</span> &#123; <span class="hljs-title class_">Contract</span>, <span class="hljs-title class_">JsonRpcProvider</span>, keccak256, toUtf8Bytes, toUtf8String &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;ethers&#x27;</span>);
+<span class="hljs-keyword">const</span> &#123; gunzipSync &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;node:zlib&#x27;</span>);
+
+<span class="hljs-keyword">const</span> provider = <span class="hljs-keyword">new</span> <span class="hljs-title class_">JsonRpcProvider</span>(<span class="hljs-string">&#x27;https://polygon.drpc.org&#x27;</span>);
+<span class="hljs-keyword">const</span> contract = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Contract</span>(contractAddress, abi, provider);
+<span class="hljs-keyword">const</span> slugHash = <span class="hljs-title function_">keccak256</span>(<span class="hljs-title function_">toUtf8Bytes</span>(<span class="hljs-string">&#x27;4&#x27;</span>));
+
+<span class="hljs-keyword">const</span> rawPayload = <span class="hljs-keyword">await</span> contract.<span class="hljs-title function_">article</span>(slugHash);
+<span class="hljs-keyword">const</span> payload = <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(<span class="hljs-title function_">toUtf8String</span>(rawPayload));
+<span class="hljs-keyword">const</span> markdown = <span class="hljs-title function_">gunzipSync</span>(
+  <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>(payload.<span class="hljs-property">content</span>, <span class="hljs-string">&#x27;base64&#x27;</span>)
+).<span class="hljs-title function_">toString</span>(<span class="hljs-string">&#x27;utf8&#x27;</span>);
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(payload.<span class="hljs-property">title</span>);
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(markdown);</code></pre>
+
+<p>验证时不要只看网页上的文字。至少要在 Polygonscan 确认：</p>
+<ul>
+<li>网络是 Polygon PoS 主网，链 ID 为 <code>137</code>。</li>
+<li>交易发送者是预期的发布钱包。</li>
+<li>交易目标是预期的合约地址。</li>
+<li>交易状态成功，并记录了正确的区块高度。</li>
+<li>合约返回的 <code>payloadHash</code> 与实际 payload 的 Keccak-256 一致。</li>
+</ul>
+<h2 id="实际踩过的坑"><a href="#实际踩过的坑" class="headerlink" title="实际踩过的坑"></a>实际踩过的坑</h2><h3 id="1-测试网Polygon不等于无限免费"><a href="#1-测试网Polygon不等于无限免费" class="headerlink" title="1. 测试网Polygon不等于无限免费"></a>1. 测试网Polygon不等于无限免费</h3><p>Amoy 测试网适合验证流程，但水龙头通常有领取频率和数量限制。完整 HTML 或文章 payload 的 calldata 与存储都很贵，首次部署加首次写入很容易超过当天领取的测试币。</p>
+<p>测试时应先缩短 payload，分开验证「部署」和「发布」，并在发送交易前打印 gas estimate。切换主网时必须同时检查 chain ID、RPC、区块浏览器地址和 Gas 代币，不能只换一个 RPC URL。</p>
+<h3 id="2-构建时间让首页无限重复上链"><a href="#2-构建时间让首页无限重复上链" class="headerlink" title="2. 构建时间让首页无限重复上链"></a>2. 构建时间让首页无限重复上链</h3><p>只要 HTML 里包含当前时间、Git commit、实时区块高度或随机值，原始 HTML 哈希就不稳定。必须先定义哪些字段代表内容，哪些只是展示元数据，再进行严格规范化。</p>
+<h3 id="3-RPC-不稳定导致-CI-偶发失败"><a href="#3-RPC-不稳定导致-CI-偶发失败" class="headerlink" title="3. RPC 不稳定导致 CI 偶发失败"></a>3. RPC 不稳定导致 CI 偶发失败</h3><p>公共 RPC 可能限流、超时或不支持批量请求。文章发布器应关闭不必要的 JSON-RPC batching，设置明确网络，并在日志中区分「RPC 失败」「余额不足」「交易回滚」和「等待确认超时」。</p>
+<p>不要在失败后无条件重发。先读取链上 <code>contentHash</code>，因为上一笔交易可能已经广播成功，只是 CI 在等待回执时中断了。</p>
+<h3 id="4-外链图片仍然可以消失"><a href="#4-外链图片仍然可以消失" class="headerlink" title="4. 外链图片仍然可以消失"></a>4. 外链图片仍然可以消失</h3><p>文章正文永久存在，不代表 OSS 链接永久存在。只保存 URL 的 MD5 也不能证明远端文件内容。需要完整存证时，应把图片迁移到内容寻址存储，并将 CID 纳入文章内容哈希。、</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li>项目源码：<a target="_blank" rel="noopener" href="https://github.com/Moitr/homepage">github.com&#x2F;Moitr&#x2F;homepage</a></li>
+<li>在线网站：<a href="https://moitr.cc/">moitr.cc</a></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Hexo 提供简单可靠的静态内容模型，GitHub Actions 把构建和发布变成可重复流程，Polygon 则为每个版本提供公开时间线和可验证字节。三者组合后，网页依然快速、易读、易维护，同时多了一份不依赖博客服务器自身信用的内容证明。</p>
+</div>
+    <footer class="article-footer">
+      <span>Last updated Aug 11, 2026</span>
+    </footer>
+  </div>
+  <div class="article-balance" aria-hidden="true"></div>
+</article>
+
+      
+    </main>
+    
+<footer class="site-footer">
+  <div class="site-footer-line">
+    <span>Build <a class="site-footer-build" href="https://github.com/Moitr/Dotme/commit/3d8caf75199fecdeb178188a454014cd45e9a341" target="_blank" rel="noopener noreferrer" aria-label="View commit 3d8caf75 on GitHub"><code>3d8caf75</code></a> &middot; <time datetime="2026-09-10T14:22:20.012Z">2026-09-10 22:22:20 UTC+8</time></span>
+  </div>
+</footer>
+
+    <script src="/js/app.js?v=3d8caf75" defer></script>
+  </body>
+</html>
