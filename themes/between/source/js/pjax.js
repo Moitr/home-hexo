@@ -5,7 +5,6 @@
 
   var root = document.documentElement;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var directionTimer;
   var navigationInProgress = false;
   var loadingTimer;
   var loadingStartedAt = 0;
@@ -43,15 +42,12 @@
   }
 
   function setNavigationDirection(visit) {
-    window.clearTimeout(directionTimer);
     root.classList.remove('is-opening-article', 'is-closing-article');
+    if (reducedMotion) return;
     var fromArticle = articlePath(visit.from.url);
     var toArticle = articlePath(visit.to.url);
     if (!fromArticle && toArticle) root.classList.add('is-opening-article');
     if (fromArticle && !toArticle) root.classList.add('is-closing-article');
-    directionTimer = window.setTimeout(function () {
-      root.classList.remove('is-opening-article', 'is-closing-article');
-    }, 1300);
   }
 
   function closeMobileMenu() {
@@ -449,6 +445,9 @@
         item.classList.remove('page-enter-item');
         item.style.removeProperty('--page-enter-order');
       });
+      // Clear direction only after removing the entrance animation classes.
+      // Changing animation-name mid-entrance restarts it on slower navigations.
+      root.classList.remove('is-opening-article', 'is-closing-article');
     }
 
     timer = window.setTimeout(clear, 1100);
@@ -482,10 +481,10 @@
         setPageLoading(true);
         root.classList.add('is-pjax-ready');
         root.classList.add('is-content-leaving');
-        setNavigationDirection(visit);
         visit.animation.animate = false;
         cancelVisiblePrefetch();
         if (window.sitePageCleanup) window.sitePageCleanup();
+        setNavigationDirection(visit);
       },
       'page:load': function () {
         closeMobileMenu();
@@ -505,6 +504,7 @@
       'visit:error': function () {
         navigationInProgress = false;
         root.classList.remove('is-content-leaving');
+        root.classList.remove('is-opening-article', 'is-closing-article');
         cancelPageLoading();
       }
     }
