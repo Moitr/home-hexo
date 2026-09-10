@@ -481,6 +481,7 @@
         navigationInProgress = true;
         setPageLoading(true);
         root.classList.add('is-pjax-ready');
+        root.classList.add('is-content-leaving');
         setNavigationDirection(visit);
         visit.animation.animate = false;
         cancelVisiblePrefetch();
@@ -493,6 +494,7 @@
         syncHead(args.page.html);
       },
       'page:view': function () {
+        root.classList.remove('is-content-leaving');
         root.classList.remove('is-history-return');
         updateActiveNavigation();
         initializePage();
@@ -502,6 +504,7 @@
       },
       'visit:error': function () {
         navigationInProgress = false;
+        root.classList.remove('is-content-leaving');
         cancelPageLoading();
       }
     }

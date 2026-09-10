@@ -228,9 +228,9 @@ img {
 .page-loading {
   position: fixed;
   z-index: 1000;
-  inset: 14px 18px auto auto;
-  width: 14px;
-  height: 14px;
+  inset: 16px 20px auto auto;
+  width: 18px;
+  height: 18px;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
@@ -244,12 +244,13 @@ img {
 
 .page-loading-spinner {
   display: block;
-  width: 14px;
-  height: 14px;
-  border: 2px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  width: 18px;
+  height: 18px;
+  border: 2px solid color-mix(in srgb, var(--accent) 28%, transparent);
   border-top-color: var(--accent);
   border-radius: 50%;
-  animation: page-loading-spin 700ms linear infinite;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 7%, transparent);
+  animation: page-loading-spin 760ms linear infinite;
 }
 
 @keyframes page-loading-spin {
@@ -273,7 +274,12 @@ html.is-pjax-ready:not(.swup-native).is-changing .site-footer {
 
 #main-content {
   flex: 1 0 auto;
+  transition: opacity 120ms ease;
   view-transition-name: site-content;
+}
+
+html.is-content-leaving #main-content {
+  opacity: 0.72;
 }
 
 .site-footer {
