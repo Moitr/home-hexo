@@ -5,7 +5,6 @@
 
   var root = document.documentElement;
   var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var nativeTransitions = !reducedMotion && typeof document.startViewTransition === 'function';
   var directionTimer;
   var navigationInProgress = false;
   var loadingTimer;
@@ -419,7 +418,7 @@
   }
 
   function initializePageEntrance() {
-    if (reducedMotion || (nativeTransitions && navigationInProgress)) return function () {};
+    if (reducedMotion) return function () {};
     var selectors = [
       '.about-intro h1',
       '.about-intro > p',
