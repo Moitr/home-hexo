@@ -1,6 +1,7 @@
 <% if (articleChain && articleChain.contract_address) { %>
-  <div class="article-onchain" aria-label="On-chain publication">
-    <p class="article-onchain-status">This article is archived on the <strong>Polygon blockchain</strong> with a publicly verifiable on-chain record.</p>
+  <details class="article-onchain" aria-label="On-chain publication">
+    <summary class="article-onchain-status">This article is archived on the <strong>Polygon blockchain</strong> with a publicly verifiable on-chain record.</summary>
+    <div class="article-onchain-details">
     <div class="article-onchain-row">
       <span class="article-onchain-label">Block Height</span>
       <span class="onchain-value-wrap">
@@ -15,17 +16,16 @@
     </div>
     <div class="article-onchain-row">
       <span class="article-onchain-label">Transaction Hash</span>
-      <span class="onchain-value-wrap is-expandable">
+      <span class="onchain-value-wrap">
         <span class="onchain-text"><%= articleChain.transaction_hash %></span>
-        <button class="onchain-expand" type="button" data-onchain-expand data-label="Transaction Hash" aria-expanded="false" aria-label="Show full Transaction Hash" title="Show full Transaction Hash"></button>
       </span>
     </div>
     <div class="article-onchain-row">
       <span class="article-onchain-label">Contract Address</span>
-      <span class="onchain-value-wrap is-expandable">
+      <span class="onchain-value-wrap">
         <a class="onchain-link" href="https://polygonscan.com/address/<%= articleChain.contract_address %>" target="_blank" rel="noreferrer"><%= articleChain.contract_address %></a>
-        <button class="onchain-expand" type="button" data-onchain-expand data-label="Contract Address" aria-expanded="false" aria-label="Show full Contract Address" title="Show full Contract Address"></button>
       </span>
     </div>
-  </div>
+    </div>
+  </details>
 <% } %>

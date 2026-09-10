@@ -21,13 +21,14 @@
         <% } %>
       </div>
       <%- partial('_partial/article-onchain', { articleChain: article_onchain_meta(page.slug) }) %>
-    </header>
     <% if (page.original_url) { %>
       <aside class="article-origin" aria-label="原文来源">
         <span class="article-origin-copy">本文通过自动化程序同步自原博客</span>
-        <a href="<%= page.original_url %>" target="_blank" rel="noopener noreferrer">前往原博客完整阅读<span class="article-origin-arrow" aria-hidden="true">↗</span></a>
+        <span class="article-origin-separator" aria-hidden="true"> · </span>
+        <a href="<%= page.original_url %>" target="_blank" rel="noopener noreferrer">阅读原文<span class="article-origin-arrow" aria-hidden="true">↗</span></a>
       </aside>
     <% } %>
+    </header>
     <div class="article-content"><%- page.content %></div>
     <footer class="article-footer">
       <span>Last updated <%= page.updated.format('MMM DD, YYYY') %></span>
